@@ -1,16 +1,19 @@
 const MongoClient = require('mongodb').MongoClient;
 const config = require('../config');
 class database{
-    client;
-    db;
-    connect = async()=>{
-        client = await MongoClient.connect(config.mongoUrl);
-        db = client.db(config.dbName);
+    database(){
+        this.client = {};
+        this.db = {};
     }
-    getCollection = (collectionName)=>{
-        return this.db.collection(collectionName);
+    async connect(){
+        this.client = await MongoClient.connect(config.mongoUrl,config.options);
+        this.db = this.client.db(config.dbName);
     }
-    dispose = ()=>{
+    async getCollection(collectionName){
+        if(this.db)
+        return await this.db.collection(collectionName);
+    }
+    dispose(){
         this.client.close();
     }
 }
